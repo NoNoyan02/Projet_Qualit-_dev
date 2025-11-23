@@ -33,7 +33,87 @@ La Clean Architecture centre l'application sur les **règles métier** :
 
 ```
 chess-qualitedev/
-│ ( à modifié)
+|   pom.xml                     # Configuration Maven : dépendances, plugins, version Java, build, etc.
+|   README.md                    # Documentation du projet, instructions, architecture, équipe
+\---src
+    +---main
+    |   +---java
+    |   |   |   ChessGame.java                  # Classe principale pour lancer le jeu
+    |   |   |
+    |   |   \---com
+    |   |       \---chess
+    |   |           +---configuration
+    |   |           |       AppConfig.java     # Configuration globale du projet (paramètres)
+    |   |           |
+    |   |           +---core
+    |   |           |   +---entities
+    |   |           |   |   |   Color.java       # Enum des couleurs des pièces (Blanc/Noir)
+    |   |           |   |   |   Position.java    # Représente la position d'une case (ex : e4)
+    |   |           |   |   |
+    |   |           |   |   +---game
+    |   |           |   |   |       Board.java       # Représentation du plateau de jeu
+    |   |           |   |   |       GameState.java   # État actuel de la partie (en cours, échec, mat)
+    |   |           |   |   |       Move.java        # Représente un mouvement de pièce
+    |   |           |   |   |       Tile.java        # Représente une case du plateau
+    |   |           |   |   |
+    |   |           |   |   +---pieces
+    |   |           |   |   |       Bishop.java     # Classe pour le Fou
+    |   |           |   |   |       King.java       # Classe pour le Roi
+    |   |           |   |   |       Knight.java     # Classe pour le Cavalier
+    |   |           |   |   |       Pawn.java       # Classe pour le Pion
+    |   |           |   |   |       Piece.java      # Classe abstraite ou interface pour toutes les pièces
+    |   |           |   |   |       Queen.java      # Classe pour la Reine
+    |   |           |   |   |       Rook.java       # Classe pour la Tour
+    |   |           |   |   |
+    |   |           |   |   \---player
+    |   |           |   |           AIPlayer.java   # Joueur IA utilisant Stockfish
+    |   |           |   |           Player.java     # Joueur humain
+    |   |           |   |
+    |   |           |   +---ports
+    |   |           |   |       ChessEngine.java    # Interface pour moteur d’échecs
+    |   |           |   |       GameRepository.java # Interface pour la persistance des parties
+    |   |           |   |       MoveLogger.java     # Interface pour journalisation des coups
+    |   |           |   |
+    |   |           |   \---usecases
+    |   |           |           AnalyzePositionUseCase.java   # Analyse d’une position pour évaluation
+    |   |           |           GetBestMoveUseCase.java       # Récupération du meilleur coup
+    |   |           |           MovePieceInteractor.java      # Application d’un coup sur le plateau
+    |   |           |           MovePieceUseCase.java         # Cas d’usage pour déplacer une pièce
+    |   |           |
+    |   |           +---dataproviders
+    |   |           |   +---file
+    |   |           |   |       FileGameRepository.java      # Persistance des parties en fichiers
+    |   |           |   |       FileMoveLogger.java          # Journalisation des coups en fichiers
+    |   |           |   |
+    |   |           |   \---stockfish
+    |   |           |           StockfishEngine.java         # Implémentation de l’interface ChessEngine pour Stockfish
+    |   |           |           StockfishProcess.java        # Gestion du processus Stockfish externe
+    |   |           |
+    |   |           \---entrypoints
+    |   |               +---console
+    |   |               |       ConsoleController.java       # Interface console pour jouer
+    |   |               |
+    |   |               +---gui
+    |   |               |       GuiController.java           # Interface graphique Swing/JavaFX
+    |   |               |
+    |   |               \---web
+    |   |                   +---controllers                 # Controllers REST pour l’interface web
+    |   |                   \---dto                         # Objets de transfert de données pour API
+    |   \---resources
+    |       \---images                                    # Images utilisées pour l’interface (pièces, plateau)
+    \---test
+        +---java
+        |   \---com
+        |       \---chess
+        |           +---acceptance                           # Tests d’acceptation / fonctionnels
+        |           +---architecture                         # Tests de structure et respect des patterns
+        |           +---core
+        |           |   +---entities                         # Tests unitaires pour entités du domaine
+        |           |   \---usecases                         # Tests unitaires pour use cases
+        |           +---dataproviders                        # Tests pour persistence et moteurs (Stockfish)
+        |           +---entrypoints                           # Tests pour consoles, GUI ou Web
+        |           \---integration                           # Tests d’intégration entre modules
+        \---resources                                       # Ressources nécessaires aux tests (ex : JSON de test)
 ```
 
 ### Core : Entités
