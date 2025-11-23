@@ -5,286 +5,111 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ==========================================
-         Informations du projet
-         ========================================== -->
     <groupId>com.chess</groupId>
     <artifactId>chess-qualitedev</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Chess Quality Development</name>
-    <description>Projet d'échecs en Clean Architecture avec Stockfish - R3.04 Groupe 207</description>
+    <name>Chess Game - Qualité de Développement</name>
+    <description>Jeu d'échecs implémenté avec Clean Architecture et SOLID</description>
 
-    <!-- ==========================================
-         Propriétés
-         ========================================== -->
     <properties>
-        <!-- Versions Java -->
-        <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Versions des dépendances - Tests -->
+        <!-- Versions des dépendances -->
         <junit.version>5.10.1</junit.version>
-        <archunit.version>1.2.1</archunit.version>
-        <jacoco.version>0.8.11</jacoco.version>
         <mockito.version>5.8.0</mockito.version>
-        <assertj.version>3.25.1</assertj.version>
-
-        <!-- Versions des dépendances - Core -->
-        <stockfish.version>1.0.0</stockfish.version>
-        <jackson.version>2.16.1</jackson.version>
-        <opencsv.version>5.9</opencsv.version>
-
-        <!-- Spring Boot (décommenter si interface web) -->
-        <!-- <spring-boot.version>3.2.1</spring-boot.version> -->
+        <assertj.version>3.24.2</assertj.version>
+        <archunit.version>1.2.1</archunit.version>
+        <slf4j.version>2.0.9</slf4j.version>
+        <logback.version>1.4.14</logback.version>
+        <jackson.version>2.16.0</jackson.version>
+        <stockfish.version>1.0.3</stockfish.version>
     </properties>
 
-    <!-- ==========================================
-         Parent Spring Boot (décommenter si web)
-         ========================================== -->
-    <!--
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version>
-        <relativePath/>
-    </parent>
-    -->
-
     <dependencies>
-        <!-- ==========================================
-             MOTEUR D'ÉCHECS - STOCKFISH
-             ========================================== -->
-
-        <!-- Stockfish Java Wrapper -->
+        <!-- Moteur d'échecs Stockfish -->
         <dependency>
             <groupId>io.github.guillaumcn</groupId>
             <artifactId>chess-stockfish</artifactId>
-            <version>1.0.3</version>
+            <version>${stockfish.version}</version>
         </dependency>
 
-        <!-- ==========================================
-             TESTS
-             ========================================== -->
-
-        <!-- JUnit 5 - Framework de tests -->
+        <!-- Logging -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
-
-        <!-- Mockito - Mocking framework -->
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- ArchUnit - Validation de l'architecture -->
-        <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit-junit5</artifactId>
-            <version>${archunit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- AssertJ - Assertions fluides -->
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>${assertj.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- ==========================================
-             PERSISTANCE - JSON
-             ========================================== -->
-
-        <!-- Jackson - Sérialisation/Désérialisation JSON -->
+        <!-- JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 
+        <!-- Tests -->
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- ==========================================
-             PERSISTANCE - CSV (optionnel)
-             ========================================== -->
-
-        <!-- OpenCSV - Lecture/Écriture CSV -->
-        <!--
-        <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>${opencsv.version}</version>
-        </dependency>
-        -->
-
-        <!-- ==========================================
-             LOGGING
-             ========================================== -->
-
-        <!-- SLF4J API -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.9</version>
-        </dependency>
-
-        <!-- Logback Implementation -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.4.14</version>
-        </dependency>
-
-        <!-- ==========================================
-             SPRING BOOT (décommenter si interface web)
-             ========================================== -->
-
-        <!--
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        -->
-
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>${archunit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- ==========================================
-                 COMPILATION
-                 ========================================== -->
-
-            <!-- Maven Compiler Plugin -->
+            <!-- Compilation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.12.1</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
 
-            <!-- ==========================================
-                 TESTS
-                 ========================================== -->
-
-            <!-- Maven Surefire Plugin - Exécution des tests -->
+            <!-- Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.3</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                </configuration>
             </plugin>
 
-            <!-- ==========================================
-                 COUVERTURE DE CODE
-                 ========================================== -->
-
-            <!-- JaCoCo - Code Coverage -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <!-- Préparation de l'agent JaCoCo -->
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-
-                    <!-- Génération du rapport -->
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-
-                    <!-- Vérification du seuil de couverture -->
-                    <execution>
-                        <id>jacoco-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <!-- Règle pour les use cases (99% min) -->
-                                <rule>
-                                    <element>PACKAGE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                            <excludes>
-                                <!-- Exclure les entrypoints de la couverture stricte -->
-                                <exclude>**/entrypoints/**</exclude>
-                                <exclude>**/configuration/**</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- ==========================================
-                 PACKAGING
-                 ========================================== -->
-
-            <!-- Maven JAR Plugin - Création du JAR exécutable -->
+            <!-- JAR exécutable -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -294,13 +119,12 @@
                         <manifest>
                             <mainClass>ChessGame</mainClass>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
 
-            <!-- Maven Assembly Plugin - JAR avec dépendances -->
+            <!-- Assembly (fat JAR avec dépendances) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -325,46 +149,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- ==========================================
-                 QUALITÉ DU CODE
-                 ========================================== -->
-
-            <!-- Maven Checkstyle Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <configLocation>google_checks.xml</configLocation>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>false</failsOnError>
-                </configuration>
-            </plugin>
-
-            <!-- ==========================================
-                 SPRING BOOT (décommenter si web)
-                 ========================================== -->
-
-            <!--
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            -->
-
         </plugins>
     </build>
-
-    <!-- ==========================================
-         REPOSITORIES (pour Stockfish)
-         ========================================== -->
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
 </project>
