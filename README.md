@@ -104,16 +104,27 @@ mvn spring-boot:run
 
 Puis : `http://localhost:8080`
 
+### Stockfish (moteur d’échecs)
+
+- La dépendance Java io.github.guillaumcn:chess-stockfish:1.0.3 est utilisée.
+- Aucun besoin d’installer Stockfish sur Windows, le moteur est inclus dans le jar.
+- L’API Java permet de lancer Stockfish 17.1, calculer les coups et lire les résultats directement depuis ton code.
+
 ## 💻 Technologies
 
 ### Core
 
 - **Java 17** - Langage principal
 - **JUnit 5** - Tests unitaires
+- **Mockito, ArchUnit, AssertJ** - Tests et validation architecture
 
-### Web (à définir)
+### Persistance
+- **JSON** 
 
-Options envisagées :
+### Logging
+- SLF4J + Logback
+
+### Web
 
 - **Spring Boot** - Framework web
 - **Thymeleaf** - Templates HTML
