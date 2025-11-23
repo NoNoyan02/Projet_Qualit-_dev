@@ -7,15 +7,20 @@ import com.chess.core.entities.game.GameState;
 import com.chess.core.entities.game.Move;
 import com.chess.core.entities.pieces.*;
 import com.chess.core.ports.MoveLogger;
+import com.chess.core.ports.ChessEngine;
+import com.chess.core.entities.player.Player;
+import com.chess.core.entities.player.AIPlayer;
 
 /**
  * Implémentation du cas d'usage pour déplacer une pièce.
  */
 public class MovePieceInteractor implements MovePieceUseCase {
     private final MoveLogger moveLogger;
+    private final ChessEngine chessEngine;
 
-    public MovePieceInteractor(MoveLogger moveLogger) {
+    public MovePieceInteractor(MoveLogger moveLogger, ChessEngine chessEngine) {
         this.moveLogger = moveLogger;
+        this.chessEngine = chessEngine;
     }
 
     @Override
@@ -79,6 +84,20 @@ public class MovePieceInteractor implements MovePieceUseCase {
         } catch (IllegalMoveException e) {
             return false;
         }
+    }
+
+    /**
+     * Gère le cas d'un joueur IA.
+     */
+    public Move handleAIMove(GameState gameState, Player aiPlayer) {
+        if (aiPlayer instanceof AIPlayer) {
+            AIPlayer ai = (AIPlayer) aiPlayer;
+            String fen = gameState.toFen();
+            String bestMove = chessEngine.getBestMove(fen, 1000); // 1000 ms de réflexion
+            Move move = Move.fromAlgebraic(bestMove, gameState.getBoard());
+            return move;
+        }
+        return null;
     }
 
     /**

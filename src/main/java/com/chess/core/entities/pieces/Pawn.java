@@ -22,17 +22,25 @@ public class Pawn extends Piece {
         int direction = color == Color.WHITE ? 1 : -1;
 
         // Avance d'une case
-        Position oneForward = new Position(from.getRow() + direction, from.getCol());
-        if (oneForward.isValid() && board.getPieceAt(oneForward) == null) {
-            moves.add(oneForward);
+        int oneForwardRow = from.getRow() + direction;
+        int oneForwardCol = from.getCol();
+        if (isValidCoordinate(oneForwardRow, oneForwardCol)) {
+            Position oneForward = new Position(oneForwardRow, oneForwardCol);
+            if (board.getPieceAt(oneForward) == null) {
+                moves.add(oneForward);
 
-            // Avance de deux cases (premier mouvement)
-            if (!hasMoved) {
-                int startRow = color == Color.WHITE ? 1 : 6;
-                if (from.getRow() == startRow) {
-                    Position twoForward = new Position(from.getRow() + 2 * direction, from.getCol());
-                    if (twoForward.isValid() && board.getPieceAt(twoForward) == null) {
-                        moves.add(twoForward);
+                // Avance de deux cases (premier mouvement)
+                if (!hasMoved) {
+                    int startRow = color == Color.WHITE ? 1 : 6;
+                    if (from.getRow() == startRow) {
+                        int twoForwardRow = from.getRow() + 2 * direction;
+                        int twoForwardCol = from.getCol();
+                        if (isValidCoordinate(twoForwardRow, twoForwardCol)) {
+                            Position twoForward = new Position(twoForwardRow, twoForwardCol);
+                            if (board.getPieceAt(twoForward) == null) {
+                                moves.add(twoForward);
+                            }
+                        }
                     }
                 }
             }
@@ -41,9 +49,13 @@ public class Pawn extends Piece {
         // Captures diagonales
         int[] captureOffsets = {-1, 1};
         for (int offset : captureOffsets) {
-            Position capture = new Position(from.getRow() + direction, from.getCol() + offset);
-            if (capture.isValid() && isEnemyPiece(capture, board)) {
-                moves.add(capture);
+            int captureRow = from.getRow() + direction;
+            int captureCol = from.getCol() + offset;
+            if (isValidCoordinate(captureRow, captureCol)) {
+                Position capture = new Position(captureRow, captureCol);
+                if (isEnemyPiece(capture, board)) {
+                    moves.add(capture);
+                }
             }
         }
 
@@ -70,5 +82,12 @@ public class Pawn extends Piece {
     public boolean canPromote(Position position) {
         int promotionRow = color == Color.WHITE ? 7 : 0;
         return position.getRow() == promotionRow;
+    }
+
+    /**
+     * Vérifie si des coordonnées sont valides avant de créer une Position.
+     */
+    private boolean isValidCoordinate(int row, int col) {
+        return row >= 0 && row <= 7 && col >= 0 && col <= 7;
     }
 }

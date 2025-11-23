@@ -64,12 +64,8 @@ public class ConsoleController {
 
                 movePieceUseCase.execute(gameState, move.getFrom(), move.getTo());
 
-            } catch (MovePieceUseCase.IllegalMoveException e) {
-                System.out.println("❌ Mouvement illégal: " + e.getMessage());
-                continue;
             } catch (Exception e) {
                 System.out.println("❌ Erreur: " + e.getMessage());
-                continue;
             }
         }
 
@@ -177,16 +173,13 @@ public class ConsoleController {
         String blackName = scanner.nextLine().trim();
 
         if (whiteName.equalsIgnoreCase("AI")) {
-            // L'IA nécessite le moteur Stockfish configuré
-            System.out.println("Mode IA pour les blancs non disponible sans moteur configuré.");
-            whitePlayer = new Player("Joueur Blanc", Color.WHITE);
+            whitePlayer = new Player("IA Blanche", Color.WHITE, Player.PlayerType.AI);
         } else {
             whitePlayer = new Player(whiteName, Color.WHITE);
         }
 
         if (blackName.equalsIgnoreCase("AI")) {
-            System.out.println("Mode IA pour les noirs non disponible sans moteur configuré.");
-            blackPlayer = new Player("Joueur Noir", Color.BLACK);
+            blackPlayer = new Player("IA Noire", Color.BLACK, Player.PlayerType.AI);
         } else {
             blackPlayer = new Player(blackName, Color.BLACK);
         }

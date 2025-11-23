@@ -31,13 +31,14 @@ public class AppConfig {
      * Constructeur qui initialise toutes les dépendances.
      */
     public AppConfig() {
+        this.chessEngine = new StockfishEngine(); // Remplacez par votre implémentation
+
         // Dataproviders (Adapters)
         this.gameRepository = new FileGameRepository(SAVE_DIRECTORY);
         this.moveLogger = new FileMoveLogger(LOG_DIRECTORY);
-        this.chessEngine = new StockfishEngine();
 
         // Use Cases
-        this.movePieceUseCase = new MovePieceInteractor(moveLogger);
+        this.movePieceUseCase = new MovePieceInteractor(moveLogger,chessEngine);
         this.getBestMoveUseCase = new GetBestMoveUseCase(chessEngine);
         this.analyzePositionUseCase = new AnalyzePositionUseCase(chessEngine);
     }
@@ -52,7 +53,7 @@ public class AppConfig {
         this.moveLogger = moveLogger;
         this.chessEngine = chessEngine;
 
-        this.movePieceUseCase = new MovePieceInteractor(moveLogger);
+        this.movePieceUseCase = new MovePieceInteractor(moveLogger,chessEngine);
         this.getBestMoveUseCase = new GetBestMoveUseCase(chessEngine);
         this.analyzePositionUseCase = new AnalyzePositionUseCase(chessEngine);
     }

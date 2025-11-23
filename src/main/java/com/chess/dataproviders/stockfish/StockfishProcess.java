@@ -21,9 +21,49 @@ public class StockfishProcess {
      */
     public void initialize() {
         try {
-            // Utilisation de la bibliothèque chess-stockfish
-            // Le code réel utiliserait: xyz.niflheim.stockfish.engine.Stockfish
-            // Pour ce template, on simule l'interface
+            String os = System.getProperty("os.name").toLowerCase();
+            String stockfishPath;
+
+            if (os.contains("win")) {
+                stockfishPath = "stockfish-windows-x86-64-avx2.exe"; // Windows
+            } else if (os.contains("mac")) {
+                stockfishPath = "stockfish-macos-m1-apple-silicon"; // macOS
+            } else {
+                stockfishPath = "stockfish-ubuntu-x86-64-avx2"; // Linux/Ubuntu
+            }
+
+            // Copie depuis les ressources vers un répertoire temporaire
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(stockfishPath);
+            if (inputStream == null) {
+                throw new IOException("Fichier Stockfish non trouvé dans les ressources : " + stockfishPath);
+            }
+
+            File tempFile = File.createTempFile("stockfish-", ".exe");
+            tempFile.deleteOnExit();
+
+            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                }
+            }
+
+            // Rendre le fichier exécutable (Linux/macOS)
+            if (!tempFile.setExecutable(true)) {
+                System.err.println("Impossible de rendre le fichier exécutable : " + tempFile.getAbsolutePath());
+            }
+
+            // Lancement du processus
+            ProcessBuilder processBuilder = new ProcessBuilder(tempFile.getAbsolutePath());
+            processBuilder.redirectErrorStream(true);
+            process = processBuilder.start();
+
+            // Initialisation des flux
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+
+            // Vérification du lancement
             sendCommand("uci");
             waitForResponse("uciok");
             sendCommand("isready");

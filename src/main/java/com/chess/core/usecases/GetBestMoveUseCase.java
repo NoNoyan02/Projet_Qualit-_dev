@@ -9,39 +9,25 @@ import com.chess.core.ports.ChessEngine;
  */
 public class GetBestMoveUseCase {
     private final ChessEngine engine;
-    private final int defaultThinkingTime;
 
     public GetBestMoveUseCase(ChessEngine engine) {
-        this(engine, 1000); // 1 seconde par défaut
-    }
-
-    public GetBestMoveUseCase(ChessEngine engine, int defaultThinkingTime) {
         this.engine = engine;
-        this.defaultThinkingTime = defaultThinkingTime;
     }
 
-    /**
-     * Calcule le meilleur coup pour l'état actuel de la partie.
-     */
     public Move execute(GameState gameState) {
-        return execute(gameState, defaultThinkingTime);
-    }
-
-    /**
-     * Calcule le meilleur coup avec un temps de réflexion spécifique.
-     */
-    public Move execute(GameState gameState, int thinkingTimeMs) {
         if (!engine.isReady()) {
             engine.start();
         }
-
         String fen = gameState.toFen();
-        String bestMoveStr = engine.getBestMove(fen, thinkingTimeMs);
+        String bestMoveStr = engine.getBestMove(fen, 1000); // 1 seconde de réflexion
+        // Convertir bestMoveStr en objet Move
+        return parseMove(bestMoveStr,gameState);
+    }
 
+    private Move parseMove(String bestMoveStr,GameState gameState) {
         if (bestMoveStr == null || bestMoveStr.isEmpty()) {
             throw new NoMoveFoundException("Le moteur n'a pas trouvé de coup");
         }
-
         return Move.fromAlgebraic(bestMoveStr, gameState.getBoard());
     }
 

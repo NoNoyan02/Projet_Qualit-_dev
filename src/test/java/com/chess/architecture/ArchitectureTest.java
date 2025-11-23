@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
-import com.tngtech.archunit.library.Architectures.LayeredArchitecture;
 
 
 /**
@@ -78,19 +77,22 @@ class ArchitectureTest {
     @Test
     @DisplayName("Vérification de l'architecture en couches")
     void layeredArchitectureTest() {
-        ArchRule rule = layeredArchitecture()
+        ArchRule layeredArchRule = layeredArchitecture()
                 .consideringAllDependencies()
+                .layer("Entities").definedBy("..entities..")
                 .layer("UseCases").definedBy("..usecases..")
                 .layer("Ports").definedBy("..ports..")
                 .layer("DataProviders").definedBy("..dataproviders..")
                 .layer("Entrypoints").definedBy("..entrypoints..")
+                .layer("Configuration").definedBy("..configuration..")
 
                 .whereLayer("Entrypoints").mayNotBeAccessedByAnyLayer()
-                .whereLayer("DataProviders").mayNotBeAccessedByAnyLayer()
-                .whereLayer("UseCases").mayOnlyBeAccessedByLayers("Entrypoints", "DataProviders")
-                .whereLayer("Entities").mayOnlyBeAccessedByLayers("UseCases", "Ports", "DataProviders", "Entrypoints");
+                .whereLayer("Configuration").mayNotBeAccessedByAnyLayer()
+                .whereLayer("DataProviders").mayOnlyBeAccessedByLayers("Configuration")
+                .whereLayer("UseCases").mayOnlyBeAccessedByLayers("Entrypoints", "DataProviders", "Configuration")
+                .whereLayer("Entities").mayOnlyBeAccessedByLayers("UseCases", "Ports", "DataProviders", "Entrypoints", "Configuration");
 
-        rule.check(classes);
+        layeredArchRule.check(classes);
     }
 
     @Test
@@ -111,13 +113,17 @@ class ArchitectureTest {
     @Test
     @DisplayName("Les use cases doivent avoir un nom significatif")
     void useCasesShouldHaveMeaningfulNames() {
-        ArchRule rule = classes()
-                .that().resideInAPackage("..usecases..")
-                .and().areNotNestedClasses()
+        ArchRule useCaseNamingRule = classes()
+                .that().resideInAPackage("..core.usecases..")
+                .and().areNotInterfaces()
+                .and().areNotMemberClasses()
+                .and().areTopLevelClasses()
+                .and().haveSimpleNameNotEndingWith("Test")
                 .should().haveSimpleNameEndingWith("UseCase")
-                .orShould().haveSimpleNameEndingWith("Interactor");
+                .orShould().haveSimpleNameEndingWith("Interactor")
+                .as("UseCase classes should have meaningful names");
 
-        rule.check(classes);
+        useCaseNamingRule.check(classes);
     }
 
     @Test

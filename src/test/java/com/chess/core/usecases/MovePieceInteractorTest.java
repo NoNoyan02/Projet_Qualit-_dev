@@ -5,6 +5,7 @@ import com.chess.core.entities.Position;
 import com.chess.core.entities.game.GameState;
 import com.chess.core.entities.game.Move;
 import com.chess.core.entities.pieces.Piece;
+import com.chess.core.ports.ChessEngine;
 import com.chess.core.ports.MoveLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,13 +30,15 @@ class MovePieceInteractorTest {
 
     @Mock
     private MoveLogger moveLogger;
+    @Mock
+    private ChessEngine chessEngine;
 
     private MovePieceInteractor movePieceInteractor;
     private GameState gameState;
 
     @BeforeEach
     void setUp() {
-        movePieceInteractor = new MovePieceInteractor(moveLogger);
+        movePieceInteractor = new MovePieceInteractor(moveLogger,chessEngine);
         gameState = new GameState();
         gameState.initializeGame();
     }
@@ -175,7 +178,7 @@ class MovePieceInteractorTest {
     void execute_withMockedLogger_shouldWork() {
         // Given
         MoveLogger mockLogger = mock(MoveLogger.class);
-        MovePieceInteractor interactor = new MovePieceInteractor(mockLogger);
+        MovePieceInteractor interactor = new MovePieceInteractor(mockLogger,chessEngine);
 
         Position from = Position.fromAlgebraic("e2");
         Position to = Position.fromAlgebraic("e4");
