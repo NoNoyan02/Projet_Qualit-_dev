@@ -32,6 +32,7 @@ public class GameScreen extends JPanel {
     // Boutons de contrôle
     private JButton resignButton;
     private JButton drawButton;
+    private JButton claimDrawButton;
     private JButton settingsButton;
 
     // Indicateurs

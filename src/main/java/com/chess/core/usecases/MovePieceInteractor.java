@@ -8,8 +8,6 @@ import com.chess.core.entities.game.Move;
 import com.chess.core.entities.pieces.*;
 import com.chess.core.ports.MoveLogger;
 import com.chess.core.ports.ChessEngine;
-import com.chess.core.entities.player.Player;
-import com.chess.core.entities.player.AIPlayer;
 
 /**
  * Implémentation du cas d'usage pour déplacer une pièce.
@@ -17,10 +15,12 @@ import com.chess.core.entities.player.AIPlayer;
 public class MovePieceInteractor implements MovePieceUseCase {
     private final MoveLogger moveLogger;
     private final ChessEngine chessEngine;
+    private final DrawDetectorUseCase drawDetectorUseCase;
 
     public MovePieceInteractor(MoveLogger moveLogger, ChessEngine chessEngine) {
         this.moveLogger = moveLogger;
         this.chessEngine = chessEngine;
+        this.drawDetectorUseCase = new DrawDetectorUseCase();
     }
 
     @Override
@@ -251,6 +251,8 @@ public class MovePieceInteractor implements MovePieceUseCase {
         // Mise à jour du compteur de demi-coups
         if (move.isCapture() || move.getMovedPiece().getType() == PieceType.PAWN) {
             board.resetHalfMoveClock();
+            // Réinitialiser l'historique de répétition car la position est irréversible
+            drawDetectorUseCase.reset();
         } else {
             board.incrementHalfMoveClock();
         }
@@ -265,12 +267,38 @@ public class MovePieceInteractor implements MovePieceUseCase {
         if (board.isKingInCheck(nextPlayer)) {
             if (isCheckmate(board, nextPlayer)) {
                 gameState.updateStatus(GameState.GameStatus.CHECKMATE);
+                return;
             } else {
                 gameState.updateStatus(GameState.GameStatus.CHECK);
             }
-        } else if (isStalemate(board, nextPlayer)) {
-            gameState.updateStatus(GameState.GameStatus.STALEMATE);
         }
+
+        // Vérification de toutes les conditions de nulle
+        DrawDetectorUseCase.DrawResult drawResult = drawDetectorUseCase.checkForDraw(gameState);
+        if (drawResult.isDraw()) {
+            if (drawResult.isAutomatic()) {
+                // Nulle automatique
+                gameState.updateStatus(GameState.GameStatus.DRAW);
+                if (moveLogger != null) {
+                    moveLogger.logEvent("current",
+                            "Nulle automatique: " + drawResult.getDrawType().getDescription());
+                }
+            } else {
+                // Nulle sur réclamation possible
+                gameState.updateStatus(GameState.GameStatus.IN_PROGRESS);
+                if (moveLogger != null) {
+                    moveLogger.logEvent("current",
+                            "Nulle réclamable: " + drawResult.getDrawType().getDescription());
+                }
+            }
+        }
+    }
+
+    /**
+     * Obtient le détecteur de nulle (pour vérification externe).
+     */
+    public DrawDetectorUseCase getDrawDetector() {
+        return drawDetectorUseCase;
     }
 
     /**
@@ -278,13 +306,6 @@ public class MovePieceInteractor implements MovePieceUseCase {
      */
     private boolean isCheckmate(Board board, Color color) {
         return board.isKingInCheck(color) && !hasLegalMoves(board, color);
-    }
-
-    /**
-     * Vérifie si c'est un pat.
-     */
-    private boolean isStalemate(Board board, Color color) {
-        return !board.isKingInCheck(color) && !hasLegalMoves(board, color);
     }
 
     /**

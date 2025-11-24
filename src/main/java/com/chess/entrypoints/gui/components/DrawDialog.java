@@ -1,6 +1,6 @@
 package com.chess.entrypoints.gui.components;
 
-import com.chess.core.usecases.DrawDetector;
+import com.chess.core.usecases.DrawDetectorUseCase;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -49,7 +49,7 @@ public class DrawDialog extends JDialog {
     /**
      * Dialogue pour réclamer la nulle (50 coups ou triple répétition).
      */
-    public static DrawAction showClaimDrawDialog(JFrame parent, DrawDetector.DrawType drawType) {
+    public static DrawAction showClaimDrawDialog(JFrame parent, DrawDetectorUseCase.DrawType drawType) {
         String message = buildClaimMessage(drawType);
 
         DrawDialog dialog = new DrawDialog(parent,
@@ -64,7 +64,7 @@ public class DrawDialog extends JDialog {
     /**
      * Notification de nulle automatique.
      */
-    public static void showAutomaticDrawDialog(JFrame parent, DrawDetector.DrawType drawType) {
+    public static void showAutomaticDrawDialog(JFrame parent, DrawDetectorUseCase.DrawType drawType) {
         String message = buildAutomaticDrawMessage(drawType);
 
         JOptionPane.showMessageDialog(parent,
@@ -169,7 +169,7 @@ public class DrawDialog extends JDialog {
         return null;
     }
 
-    private static String buildClaimMessage(DrawDetector.DrawType drawType) {
+    private static String buildClaimMessage(DrawDetectorUseCase.DrawType drawType) {
         StringBuilder sb = new StringBuilder();
 
         switch (drawType) {
@@ -195,7 +195,7 @@ public class DrawDialog extends JDialog {
         return sb.toString();
     }
 
-    private static String buildAutomaticDrawMessage(DrawDetector.DrawType drawType) {
+    private static String buildAutomaticDrawMessage(DrawDetectorUseCase.DrawType drawType) {
         StringBuilder sb = new StringBuilder();
         sb.append("Partie nulle !\n\n");
 

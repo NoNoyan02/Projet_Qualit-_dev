@@ -1,5 +1,6 @@
 import com.chess.configuration.AppConfig;
 import com.chess.entrypoints.console.ConsoleController;
+import com.chess.entrypoints.gui.GuiController;
 
 /**
  * Classe principale pour lancer le jeu d'échecs.
@@ -49,9 +50,11 @@ public class ChessGame {
      * Lance l'interface graphique (à implémenter).
      */
     private static void launchGUI(AppConfig config) {
-        System.out.println("Interface graphique non implémentée.");
-        System.out.println("Lancement de l'interface console à la place...");
-        launchConsole(config);
+        // Création du contrôleur GUI
+        GuiController guiController = new GuiController(config);
+
+        // Démarrage de l'application Swing
+        guiController.start();
     }
 
     /**

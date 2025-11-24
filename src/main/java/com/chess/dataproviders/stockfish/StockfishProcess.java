@@ -19,7 +19,7 @@ public class StockfishProcess {
 
     @Getter
     @Setter
-    private boolean stabilisationProfondeur = false;
+    private boolean stabilisationProfondeur = true;
     /**
      * Initialise le moteur Stockfish.
      * La bibliothèque io.github.guillaumcn:chess-stockfish gère automatiquement

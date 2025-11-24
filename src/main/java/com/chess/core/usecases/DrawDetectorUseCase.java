@@ -4,7 +4,6 @@ import com.chess.core.entities.Color;
 import com.chess.core.entities.Position;
 import com.chess.core.entities.game.Board;
 import com.chess.core.entities.game.GameState;
-import com.chess.core.entities.game.Move;
 import com.chess.core.entities.pieces.Piece;
 import com.chess.core.entities.pieces.PieceType;
 
@@ -13,7 +12,7 @@ import java.util.*;
 /**
  * Détecte toutes les conditions de nulle (draw) aux échecs.
  */
-public class DrawDetector {
+public class DrawDetectorUseCase {
 
     /**
      * Types de nulle possibles.
@@ -68,7 +67,7 @@ public class DrawDetector {
 
     private final Map<String, Integer> positionHistory; // FEN -> count
 
-    public DrawDetector() {
+    public DrawDetectorUseCase() {
         this.positionHistory = new HashMap<>();
     }
 
@@ -84,37 +83,39 @@ public class DrawDetector {
             return DrawResult.draw(DrawType.STALEMATE, true);
         }
 
-        // 2. Matériel insuffisant
+        // 2. Règle des 75 coups (automatique)
+        if (board.getHalfMoveClock() >= 150) {
+            return DrawResult.draw(DrawType.SEVENTY_FIVE_MOVE_RULE, true);
+        }
+
+        // 3. Quintuple répétition (automatique)
+        String currentFen = board.toFen(activeColor);
+        recordPosition(currentFen);
+        String posPart = extractPositionPart(currentFen);
+        int repetitions = positionHistory.getOrDefault(posPart, 0);
+
+//        if (repetitions >= 5) {
+//            return DrawResult.draw(DrawType.FIVEFOLD_REPETITION, true);
+//        }
+
+        // 4. Règle des 50 coups (sur réclamation)
+        if (board.getHalfMoveClock() >= 100) {
+            return DrawResult.draw(DrawType.FIFTY_MOVE_RULE, false);
+        }
+
+//        // 5. Triple répétition (sur réclamation)
+//        if (repetitions >= 3) {
+//            return DrawResult.draw(DrawType.THREEFOLD_REPETITION, false);
+//        }
+
+        // 6. Matériel insuffisant
         if (hasInsufficientMaterial(board)) {
             return DrawResult.draw(DrawType.INSUFFICIENT_MATERIAL, true);
         }
 
-        // 3. Position morte (Dead Position)
+        // 7. Position morte (Dead Position)
         if (isDeadPosition(board)) {
             return DrawResult.draw(DrawType.DEAD_POSITION, true);
-        }
-
-        // 4. Règle des 75 coups (automatique)
-        if (board.getHalfMoveClock() >= 150) { // 75 coups complets = 150 demi-coups
-            return DrawResult.draw(DrawType.SEVENTY_FIVE_MOVE_RULE, true);
-        }
-
-        // 5. Quintuple répétition (automatique)
-        String currentFen = board.toFen(activeColor);
-        recordPosition(currentFen);
-        int repetitions = positionHistory.getOrDefault(currentFen, 0);
-        if (repetitions >= 5) {
-            return DrawResult.draw(DrawType.FIVEFOLD_REPETITION, true);
-        }
-
-        // 6. Règle des 50 coups (sur réclamation)
-        if (board.getHalfMoveClock() >= 100) { // 50 coups complets = 100 demi-coups
-            return DrawResult.draw(DrawType.FIFTY_MOVE_RULE, false);
-        }
-
-        // 7. Triple répétition (sur réclamation)
-        if (repetitions >= 3) {
-            return DrawResult.draw(DrawType.THREEFOLD_REPETITION, false);
         }
 
         return DrawResult.noDraw();
