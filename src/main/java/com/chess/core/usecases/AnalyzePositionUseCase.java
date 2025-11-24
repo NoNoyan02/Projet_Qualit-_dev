@@ -26,7 +26,7 @@ public class AnalyzePositionUseCase {
         String fen = gameState.toFen();
         double evaluation = engine.evaluatePosition(fen);
         List<String> legalMoves = engine.getLegalMoves(fen);
-        String bestMove = engine.getBestMove(fen, 2000);
+        String bestMove = engine.getBestMove(fen, 50,5000);
 
         return new PositionAnalysis(evaluation, bestMove, legalMoves);
     }

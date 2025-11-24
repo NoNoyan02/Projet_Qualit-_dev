@@ -87,7 +87,7 @@ class ArchitectureTest {
                 .layer("Configuration").definedBy("..configuration..")
 
                 .whereLayer("Entrypoints").mayNotBeAccessedByAnyLayer()
-                .whereLayer("Configuration").mayNotBeAccessedByAnyLayer()
+                .whereLayer("Configuration").mayOnlyBeAccessedByLayers("Entrypoints")
                 .whereLayer("DataProviders").mayOnlyBeAccessedByLayers("Configuration")
                 .whereLayer("UseCases").mayOnlyBeAccessedByLayers("Entrypoints", "DataProviders", "Configuration")
                 .whereLayer("Entities").mayOnlyBeAccessedByLayers("UseCases", "Ports", "DataProviders", "Entrypoints", "Configuration");

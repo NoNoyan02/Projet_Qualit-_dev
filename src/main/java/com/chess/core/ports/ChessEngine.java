@@ -21,11 +21,11 @@ public interface ChessEngine {
     /**
      * Retourne le meilleur coup pour une position FEN donnée.
      *
-     * @param fen la position en notation FEN
-     * @param thinkingTimeMs temps de réflexion en millisecondes
-     * @return le meilleur coup en notation algébrique (ex: "e2e4")
+     * @param fen position FEN
+     * @param maxDepth profondeur maximale à explorer
+     * @param maxTimeMs temps maximal de réflexion
      */
-    String getBestMove(String fen, int thinkingTimeMs);
+    String getBestMove(String fen, int maxDepth, long maxTimeMs);
 
     /**
      * Évalue la position actuelle.

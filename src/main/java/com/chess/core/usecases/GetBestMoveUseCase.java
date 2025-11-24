@@ -19,7 +19,7 @@ public class GetBestMoveUseCase {
             engine.start();
         }
         String fen = gameState.toFen();
-        String bestMoveStr = engine.getBestMove(fen, 1000); // 1 seconde de réflexion
+        String bestMoveStr = engine.getBestMove(fen, 50, 5000);
         // Convertir bestMoveStr en objet Move
         return parseMove(bestMoveStr,gameState);
     }

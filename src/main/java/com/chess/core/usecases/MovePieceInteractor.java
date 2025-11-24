@@ -87,20 +87,6 @@ public class MovePieceInteractor implements MovePieceUseCase {
     }
 
     /**
-     * Gère le cas d'un joueur IA.
-     */
-    public Move handleAIMove(GameState gameState, Player aiPlayer) {
-        if (aiPlayer instanceof AIPlayer) {
-            AIPlayer ai = (AIPlayer) aiPlayer;
-            String fen = gameState.toFen();
-            String bestMove = chessEngine.getBestMove(fen, 1000); // 1000 ms de réflexion
-            Move move = Move.fromAlgebraic(bestMove, gameState.getBoard());
-            return move;
-        }
-        return null;
-    }
-
-    /**
      * Valide un mouvement avant de l'exécuter.
      */
     private void validateMove(GameState gameState, Position from, Position to) {

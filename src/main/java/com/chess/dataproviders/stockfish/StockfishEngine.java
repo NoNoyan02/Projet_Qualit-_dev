@@ -15,7 +15,7 @@ public class StockfishEngine implements ChessEngine {
     private boolean isReady;
 
     public StockfishEngine() {
-        this.skillLevel = 10;
+        this.skillLevel = 20;
         this.isReady = false;
     }
 
@@ -39,9 +39,9 @@ public class StockfishEngine implements ChessEngine {
     }
 
     @Override
-    public String getBestMove(String fen, int thinkingTimeMs) {
+    public String getBestMove(String fen, int maxDepth, long maxTimeMs) {
         ensureStarted();
-        return stockfish.getBestMove(fen, thinkingTimeMs);
+        return stockfish.getBestMove(fen, maxDepth, maxTimeMs);
     }
 
     @Override

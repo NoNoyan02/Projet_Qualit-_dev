@@ -65,7 +65,7 @@ public class ConsoleController {
                 movePieceUseCase.execute(gameState, move.getFrom(), move.getTo());
 
             } catch (Exception e) {
-                System.out.println("❌ Erreur: " + e.getMessage());
+                System.out.println("Erreur: " + e.getMessage());
             }
         }
 
@@ -113,21 +113,22 @@ public class ConsoleController {
      * Affiche le plateau de jeu.
      */
     private void displayBoard() {
-        System.out.println("\n   a b c d e f g h");
-        System.out.println("  ┌───────────────┐");
+        System.out.println("\n    a    b   c    d   e    f   g    h");
+        System.out.println("  +------------------------------------+");
 
         Board board = gameState.getBoard();
         for (int row = 7; row >= 0; row--) {
             System.out.print((row + 1) + " │");
             for (int col = 0; col < 8; col++) {
                 Piece piece = board.getPieceAt(new Position(row, col));
-                System.out.print(getPieceSymbol(piece) + " ");
+
+                System.out.print(" " + getPieceSymbol(piece) + " │");
             }
-            System.out.println("│ " + (row + 1));
+            System.out.println(" " + (row + 1));
+            System.out.println("  +------------------------------------+");
         }
 
-        System.out.println("  └───────────────┘");
-        System.out.println("   a b c d e f g h");
+        System.out.println("    a    b   c    d   e    f   g    h");
     }
 
     /**
@@ -135,18 +136,18 @@ public class ConsoleController {
      */
     private String getPieceSymbol(Piece piece) {
         if (piece == null) {
-            return " ";
+            return "　";
         }
 
         boolean isWhite = piece.getColor() == Color.WHITE;
 
         return switch (piece.getType()) {
-            case KING -> isWhite ? "♔" : "♚";
-            case QUEEN -> isWhite ? "♕" : "♛";
-            case ROOK -> isWhite ? "♖" : "♜";
-            case BISHOP -> isWhite ? "♗" : "♝";
-            case KNIGHT -> isWhite ? "♘" : "♞";
-            case PAWN -> isWhite ? "♙" : "♟";
+            case KING -> isWhite ? "♚" : "♔";
+            case QUEEN -> isWhite ? "♛" : "♕";
+            case ROOK -> isWhite ? "♜" : "♖";
+            case BISHOP -> isWhite ? "♝" : "♗";
+            case KNIGHT -> isWhite ? "♞" : "♘";
+            case PAWN -> isWhite ? "♟" : "♙";
         };
     }
 

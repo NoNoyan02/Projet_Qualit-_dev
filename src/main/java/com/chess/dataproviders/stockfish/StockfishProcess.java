@@ -1,5 +1,8 @@
 package com.chess.dataproviders.stockfish;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,9 @@ public class StockfishProcess {
     private BufferedReader reader;
     private BufferedWriter writer;
 
+    @Getter
+    @Setter
+    private boolean stabilisationProfondeur = false;
     /**
      * Initialise le moteur Stockfish.
      * La bibliothèque io.github.guillaumcn:chess-stockfish gère automatiquement
@@ -76,22 +82,54 @@ public class StockfishProcess {
     /**
      * Obtient le meilleur coup pour une position FEN.
      */
-    public String getBestMove(String fen, int thinkingTimeMs) {
+    public String getBestMove(String fen, int maxDepth, long maxTimeMs) {
         try {
-            sendCommand("position fen " + fen);
-            sendCommand("go movetime " + thinkingTimeMs);
+            ensureStarted();
 
-            String line;
+            long minTimePerDepth = 5000;
+            long startTime = System.currentTimeMillis();
+            int depth = 2;
             String bestMove = null;
-            while ((line = readLine()) != null) {
-                if (line.startsWith("bestmove")) {
-                    String[] parts = line.split(" ");
-                    if (parts.length > 1) {
-                        bestMove = parts[1];
+            double lastScore = Double.NaN;
+
+            while (depth <= maxDepth && System.currentTimeMillis() - startTime < maxTimeMs) {
+                long remainingTime = maxTimeMs - (System.currentTimeMillis() - startTime);
+                if (remainingTime <= 0) break;
+
+                long timePerDepth = Math.max(minTimePerDepth , remainingTime / (maxDepth - depth + 1));
+
+                sendCommand("position fen " + fen);
+                sendCommand("go depth " + depth + " movetime " + timePerDepth);
+
+                String line;
+                double score = 0;
+
+                while ((line = readLine()) != null) {
+                    if (line.startsWith("bestmove")) {
+                        String[] parts = line.split(" ");
+                        if (parts.length > 1) {
+                            bestMove = parts[1];
+                        }
+                        break;
+                    } else if (line.contains("score cp")) {
+                        String[] parts = line.split(" ");
+                        for (int i = 0; i < parts.length - 1; i++) {
+                            if (parts[i].equals("cp")) {
+                                score = Double.parseDouble(parts[i + 1]);
+                            }
+                        }
                     }
+                }
+
+                // Stabilisation de profondeur
+                if (stabilisationProfondeur && !Double.isNaN(lastScore) && Math.abs(score - lastScore) < 20) {
                     break;
                 }
+
+                lastScore = score;
+                depth++;
             }
+
             return bestMove;
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors du calcul du meilleur coup", e);
@@ -177,6 +215,12 @@ public class StockfishProcess {
             if (line.equals(expected)) {
                 break;
             }
+        }
+    }
+
+    private void ensureStarted() {
+        if (process == null || !process.isAlive()) {
+            initialize();
         }
     }
 
